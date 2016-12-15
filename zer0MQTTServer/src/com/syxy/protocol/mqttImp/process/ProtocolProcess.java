@@ -1,10 +1,5 @@
 package com.syxy.protocol.mqttImp.process;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.handler.timeout.IdleStateHandler;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,9 +38,13 @@ import com.syxy.protocol.mqttImp.process.event.job.RePubRelJob;
 import com.syxy.protocol.mqttImp.process.event.job.RePublishJob;
 import com.syxy.protocol.mqttImp.process.subscribe.SubscribeStore;
 import com.syxy.protocol.mqttImp.process.subscribe.Subscription;
-import com.syxy.util.Constant;
 import com.syxy.util.QuartzManager;
 import com.syxy.util.StringTool;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  *  协议所有的业务处理都在此类，注释中所指协议为MQTT3.3.1协议英文版
@@ -341,7 +340,6 @@ public class ProtocolProcess {
    	 */
 	private void processPublic(String clientID, String topic, QoS qos, boolean recRetain, ByteBuf message, Integer recPackgeID){
 		Log.info("接收public消息:{clientID="+clientID+",Qos="+qos+",topic="+topic+",packageID="+recPackgeID+"}");
-		String publishKey = null;
 //		int sendPackageID = PackageIDManager.getNextMessageId();
 		
 		//根据协议P34，Qos=3的时候，就关闭连接
@@ -864,7 +862,7 @@ public class ProtocolProcess {
 	        Log.trace("发送PubRec消息给客户端");
 
 	        Message pubRecMessage = MQTTMesageFactory.newMessage(
-	        		FixedHeader.getPubAckFixedHeader(), 
+	        		FixedHeader.getPubRecFixedHeader(), 
 	        		new PackageIdVariableHeader(packageID), 
 	        		null);
 	        
@@ -899,7 +897,7 @@ public class ProtocolProcess {
 	        Log.trace("发送PubRel消息给客户端");
 
 	        Message pubRelMessage = MQTTMesageFactory.newMessage(
-	        		FixedHeader.getPubAckFixedHeader(), 
+	        		FixedHeader.getPubRelFixedHeader(), 
 	        		new PackageIdVariableHeader(packageID), 
 	        		null);
 	        
@@ -934,7 +932,7 @@ public class ProtocolProcess {
 	        Log.trace("发送PubComp消息给客户端");
 
 	        Message pubcompMessage = MQTTMesageFactory.newMessage(
-	        		FixedHeader.getPubAckFixedHeader(), 
+	        		FixedHeader.getPubCompFixedHeader(), 
 	        		new PackageIdVariableHeader(packageID), 
 	        		null);
 	        
